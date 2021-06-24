@@ -174,6 +174,34 @@ app.post("/newoutgoing", async (req, res) => {
     };
 });
 
+app.get("/homepage", async (req, res) => {
+    const authorization = req.headers.authorization;
+    const token = authorization?.replace('Bearer ', "");
+    
+
+    if(!token){
+        res.status(401).send("Você não tem permissão para realizar esta ação!");
+        return;
+    }
+
+    try {
+        const checkToken = await connection.query(`SELECT * FROM sessoes WHERE token = $1`, [token]);
+        if (checkToken.rows.length === 0) {
+            res.status(401).send("Você não tem permissão para realizar esta ação!");
+            return;
+        }
+        const thisUserTransactions = await connection.query('SELECT * FROM transacoes WHERE "idUser" = $1', [checkToken.rows[0].idUser]);
+        if(thisUserTransactions.rows.length === 0){
+            res.send([]);
+        }
+        res.send(thisUserTransactions.rows);
+
+    } catch (err) {
+        console.log(err);
+        res.status(400).send("Ocorreu um erro. Por favor, tente novamente!");
+    };
+});
+
 app.listen(4000, () => {
     console.log("Rodando na porta 4000!");
 });
