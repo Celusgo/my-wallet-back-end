@@ -3,7 +3,7 @@ import cors from 'cors';
 import pg from 'pg';
 import Joi from 'joi';
 import bcrypt from 'bcrypt';
-import { v4 } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 const app = express();
 app.use(cors());
@@ -32,7 +32,7 @@ app.post("/register", async (req, res) => {
     const { error } = userSchema.validate({
         name: name,
         email: email,
-        password: password,
+        password: password
     })
 
     if (error) {
@@ -57,6 +57,41 @@ app.post("/register", async (req, res) => {
         console.log(err);
         res.sendStatus(400);
     }
+});
+
+app.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+
+    const loginSchema = Joi.object({
+        email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required(),
+        password: Joi.string().alphanum().pattern(/[a-zA-Z0-9]/).min(4).required()
+    })
+
+    const { error } = loginSchema.validate({
+        email: email,
+        password: password
+    })
+
+    if (error) {
+        res.status(400).send("Os dados foram inseridos de forma inválida.");
+        return;
+    };
+
+    try {
+        const checkUser = await connection.query(`
+        SELECT * FROM clientes WHERE email = $1 `, [email]);
+        if (checkUser.rows.length !== 0 && bcrypt.compareSync(password, checkUser.rows[0].senha)) {
+            const token = uuid();
+            await connection.query(`INSERT INTO sessoes ("idUser", token) VALUES ($1, $2)`, [checkUser.rows[0].id, token]);
+            delete checkUser.rows[0].senha;
+            res.send([{ ...checkUser.rows[0], token: token }]);
+        } else {
+            res.status(401).send("Usuário e/ou senha incorreto(s).");
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(400).send("Ocorreu um erro. Por favor, tente novamente!");
+    };
 });
 
 
