@@ -125,7 +125,7 @@ app.post("/newincome", async (req, res) => {
             res.status(401).send("Você não tem permissão para realizar esta ação!");
             return;
         }
-        await connection.query('INSERT INTO transacoes ("idUser", "nomeTransacao", entrada, data) VALUES ($1, $2, $3, $4)', [idUser, description, value, data]);
+        await connection.query('INSERT INTO transacoes ("idUser", "nomeTransacao", entrada, saida, data) VALUES ($1, $2, $3, $4, $5)', [idUser, description, value, 0, data]);
         res.status(201).send("Sucesso!");
 
     } catch (err) {
@@ -165,7 +165,7 @@ app.post("/newoutgoing", async (req, res) => {
             res.status(401).send("Você não tem permissão para realizar esta ação!");
             return;
         }
-        await connection.query('INSERT INTO transacoes ("idUser", "nomeTransacao", saida, data) VALUES ($1, $2, $3, $4)', [idUser, description, value, data]);
+        await connection.query('INSERT INTO transacoes ("idUser", "nomeTransacao", entrada, saida, data) VALUES ($1, $2, $3, $4, $5)', [idUser, description, 0, value, data]);
         res.status(201).send("Sucesso!");
 
     } catch (err) {
@@ -194,7 +194,8 @@ app.get("/homepage", async (req, res) => {
         if(thisUserTransactions.rows.length === 0){
             res.send([]);
         }
-        res.send(thisUserTransactions.rows);
+        const balance = thisUserTransactions.rows.reduce((acc, item) =>  acc + (item.entrada - item.saida), 0);
+        res.send([thisUserTransactions.rows, balance]);
 
     } catch (err) {
         console.log(err);
