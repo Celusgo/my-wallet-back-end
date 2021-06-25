@@ -77,7 +77,7 @@ app.post("/login", async (req, res) => {
             delete checkUser.rows[0].senha;
             res.status(200).send([{ ...checkUser.rows[0], token: token }][0]);
         } else {
-            res.status(406).send("Usuário e/ou senha incorreto(s).");
+            res.status(406).send("Usuário e/ou senha incorreto(s), ou não existe.");
         }
     } catch (err) {
         console.log(err);

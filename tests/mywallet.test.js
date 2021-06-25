@@ -5,9 +5,12 @@ import database from '../src/database.js';
 
 beforeEach(async () => {
     await connection.query(`DELETE FROM clientes`);
+    await connection.query('DELETE FROM sessoes')
   });
 
-afterAll(() => {
+afterAll(async () => {
+    await connection.query(`DELETE FROM clientes`);
+    await connection.query('DELETE FROM sessoes')
     database.end();
 });
 
