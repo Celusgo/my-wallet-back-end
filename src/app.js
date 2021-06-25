@@ -46,7 +46,7 @@ app.post("/register", async (req, res) => {
         res.sendStatus(201);
     } catch (err) {
         console.log(err);
-        res.sendStatus(400);
+        res.status(500).send("Ocorreu um erro. Por favor, tente novamente!");
     }
 });
 
@@ -77,11 +77,11 @@ app.post("/login", async (req, res) => {
             delete checkUser.rows[0].senha;
             res.status(200).send([{ ...checkUser.rows[0], token: token }][0]);
         } else {
-            res.status(401).send("Usuário e/ou senha incorreto(s).");
+            res.status(406).send("Usuário e/ou senha incorreto(s).");
         }
     } catch (err) {
         console.log(err);
-        res.status(400).send("Ocorreu um erro. Por favor, tente novamente!");
+        res.status(500).send("Ocorreu um erro. Por favor, tente novamente!");
     };
 });
 
@@ -121,7 +121,7 @@ app.post("/newincome", async (req, res) => {
 
     } catch (err) {
         console.log(err);
-        res.status(400).send("Ocorreu um erro. Por favor, tente novamente!");
+        res.status(500).send("Ocorreu um erro. Por favor, tente novamente!");
     };
 });
 
@@ -161,7 +161,7 @@ app.post("/newoutgoing", async (req, res) => {
 
     } catch (err) {
         console.log(err);
-        res.status(400).send("Ocorreu um erro. Por favor, tente novamente!");
+        res.status(500).send("Ocorreu um erro. Por favor, tente novamente!");
     };
 });
 
@@ -183,15 +183,15 @@ app.get("/homepage", async (req, res) => {
         }
         const thisUserTransactions = await connection.query('SELECT * FROM transacoes WHERE "idUser" = $1', [checkToken.rows[0].idUser]);
         if (thisUserTransactions.rows.length === 0) {
-            res.send([]);
+            res.status(200).send([]);
             return;
         }
         const balance = thisUserTransactions.rows.reduce((acc, item) => acc + (item.entrada - item.saida), 0);
-        res.send([thisUserTransactions.rows, balance]);
+        res.status(200).send([thisUserTransactions.rows, balance]);
 
     } catch (err) {
         console.log(err);
-        res.status(400).send("Ocorreu um erro. Por favor, tente novamente!");
+        res.status(500).send("Ocorreu um erro. Por favor, tente novamente!");
     };
 });
 
@@ -209,7 +209,7 @@ app.post("/logout", async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(400).send("Ocorreu um erro. Por favor, tente novamente!");
+        res.status(500).send("Ocorreu um erro. Por favor, tente novamente!");
     }
 });
 

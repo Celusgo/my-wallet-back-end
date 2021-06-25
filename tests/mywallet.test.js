@@ -99,7 +99,7 @@ describe("POST /register", () => {
         expect(exist.status).toEqual(400);
     });
 
-    it("returns status 401 for invalid user", async () => {
+    it("returns status 406 for invalid user", async () => {
         const body = {
             "name": "Marcelo",
             "email": "marcelo@gmail.com",
@@ -112,10 +112,10 @@ describe("POST /register", () => {
         const test = await supertest(app).post("/register").send(body);
         expect(test.status).toEqual(201);
         const exist = await supertest(app).post("/login").send(login);
-        expect(exist.status).toEqual(401);
+        expect(exist.status).toEqual(406);
     });
 
-    it("returns status 401 for invalid password", async () => {
+    it("returns status 406 for invalid password", async () => {
         const body = {
             "name": "Marcelo",
             "email": "marcelo@gmail.com",
@@ -128,7 +128,7 @@ describe("POST /register", () => {
         const test = await supertest(app).post("/register").send(body);
         expect(test.status).toEqual(201);
         const exist = await supertest(app).post("/login").send(login);
-        expect(exist.status).toEqual(401);
+        expect(exist.status).toEqual(406);
     });
 
 });
