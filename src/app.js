@@ -184,6 +184,7 @@ app.get("/homepage", async (req, res) => {
         const thisUserTransactions = await connection.query('SELECT * FROM transacoes WHERE "idUser" = $1', [checkToken.rows[0].idUser]);
         if (thisUserTransactions.rows.length === 0) {
             res.send([]);
+            return;
         }
         const balance = thisUserTransactions.rows.reduce((acc, item) => acc + (item.entrada - item.saida), 0);
         res.send([thisUserTransactions.rows, balance]);
