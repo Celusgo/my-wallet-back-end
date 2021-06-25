@@ -213,8 +213,4 @@ app.post("/logout", async (req, res) => {
     }
 });
 
-app.get("/banana", async (req, res) => {
-    res.sendStatus(200);
-});
-
 export default app;
