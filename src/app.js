@@ -35,7 +35,7 @@ app.post("/register", async (req, res) => {
         const checkEmail = await connection.query(`SELECT * FROM clientes WHERE email = $1`, [email]);
 
         if (checkEmail.rows.length !== 0) {
-            res.status(400).send("Este email já está cadastrado.");
+            res.status(409).send("Este email já está cadastrado.");
             return;
         }
 
@@ -43,7 +43,7 @@ app.post("/register", async (req, res) => {
 
         await connection.query(`INSERT INTO clientes (nome, email, senha) VALUES ($1, $2, $3)`, [name, email, hashedPassword])
 
-        res.sendStatus(200);
+        res.sendStatus(201);
     } catch (err) {
         console.log(err);
         res.sendStatus(400);
@@ -75,7 +75,7 @@ app.post("/login", async (req, res) => {
             const token = uuid();
             await connection.query(`INSERT INTO sessoes ("idUser", token) VALUES ($1, $2)`, [checkUser.rows[0].id, token]);
             delete checkUser.rows[0].senha;
-            res.send([{ ...checkUser.rows[0], token: token }][0]);
+            res.status(200).send([{ ...checkUser.rows[0], token: token }][0]);
         } else {
             res.status(401).send("Usuário e/ou senha incorreto(s).");
         }
