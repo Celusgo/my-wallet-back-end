@@ -24,8 +24,11 @@ git clone https://github.com/Celusgo/my-wallet-backend
 ```bash
 npm i
 ```
-6. Also in the root folder, run the back-end with
+
+6. Also in the root folder, create a file named ``.env`` in the same format as the ``.env.example`` file and fill with your information.
+
+7. Finally, run the back-end with
 ```bash
 npm run dev
 ```
-7. Your server should be running now.
+8. Your server should be running now.
