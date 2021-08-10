@@ -25,7 +25,7 @@ git clone https://github.com/Celusgo/my-wallet-backend
 npm i
 ```
 
-6. Also in the root folder, create a file named ``.env`` in the same format as the ``.env.example`` file and fill with your information.
+6. Also in the root folder, create a file named ``.env`` in the same format as the ``.env.example`` file and fill with your information. e.g.: ``DATABASE_URL=postgres://postgres:YOURPASSWORD@localhost:5432/mywallet`` where ``YOURPASSWORD`` is your PostgreSQL password and ``PORT=YOURPORT`` where ``YOURPORT`` is a port of your choice (usually 4000).
 
 7. Finally, run the back-end with
 ```bash
