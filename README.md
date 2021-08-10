@@ -26,6 +26,6 @@ npm i
 ```
 6. Also in the root folder, run the back-end with
 ```bash
-node src/server.js
+npm run dev
 ```
 7. Your server should be running now.
