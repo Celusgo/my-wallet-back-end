@@ -20,7 +20,7 @@ git clone https://github.com/Celusgo/my-wallet-backend
 
     - 4.6 Finally, type ```psql mywallet < dump.sql``` and hit enter. Your database should be ready after this step.
 
-5. Go back to the root folder and install the dependencies
+5. In your terminal, go back to the root folder and install the dependencies
 ```bash
 npm i
 ```
