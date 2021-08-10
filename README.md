@@ -6,7 +6,7 @@ git clone https://github.com/Celusgo/my-wallet-backend
 ```
 2. Clone the front-end repository at https://github.com/Celusgo/my-wallet-frontend
 3. Follow instructions to run front-end at https://github.com/Celusgo/my-wallet-frontend
-4. Create a Database using the ``dump.sql`` file inside the ``database`` folder by following theses steps:
+4. Create a Database using the ``dump.sql`` file inside the ``database`` folder by following these steps:
 
     - 4.1 Open your terminal. **Important: the terminal must be opened in the same path as the ``dump.sql`` file is located.**.
 
