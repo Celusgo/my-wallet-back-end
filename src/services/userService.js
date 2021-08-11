@@ -1,5 +1,5 @@
 
-import { findExistingMail, newUser, newSession } from "../repositories/userRepository.js";
+import { findExistingMail, newUser, newSession, checkUserId, deleteSession } from "../repositories/userRepository.js";
 import bcrypt from "bcrypt";
 import {v4 as uuid} from "uuid";
 
@@ -11,7 +11,7 @@ async function completeRegistry(name, email, password){
     const hashedPassword = bcrypt.hashSync(password, 12);
 
     await newUser(name, email, hashedPassword);
-}
+};
 
 async function authenticateSignIn(email, password){
     const registeredUser = await findExistingMail(email);
@@ -25,6 +25,14 @@ async function authenticateSignIn(email, password){
     delete registeredUser.senha;
     
     return {...registeredUser, token};
+};
+
+async function completeSignOut(token){
+    const existingSession = await checkUserId(token);
+
+    if (!existingSession) return null;
+
+    await deleteSession(token);
 }
 
-export {completeRegistry, authenticateSignIn};
+export {completeRegistry, authenticateSignIn, completeSignOut};

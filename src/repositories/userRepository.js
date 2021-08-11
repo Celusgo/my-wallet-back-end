@@ -37,4 +37,10 @@ async function checkUserId(token){
         return request.rows[0].idUser;
 };
 
-export {findExistingMail, newUser, newSession, checkSession, checkUserId};
+async function deleteSession(token){
+    await connection.query(
+        `DELETE FROM sessoes WHERE token = $1`,
+        [token]);
+}
+
+export {findExistingMail, newUser, newSession, checkSession, checkUserId, deleteSession};

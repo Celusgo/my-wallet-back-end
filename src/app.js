@@ -1,16 +1,12 @@
 import express from 'express';
 import cors from 'cors';
-import connection from './database.js';
-import Joi from 'joi';
-import bcrypt from 'bcrypt';
-import { v4 as uuid } from 'uuid';
-import { signIn, signUp } from "./controllers/userController.js";
+
+import { signIn, signUp, signOut } from "./controllers/userController.js";
 import { newIncome, newOutgoing, allTransactions } from "./controllers/transactionController.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
 
 
 app.post("/register", signUp);
@@ -23,22 +19,6 @@ app.post("/newoutgoing", newOutgoing);
 
 app.get("/homepage", allTransactions);
 
-app.post("/logout", async (req, res) => {
-    const authorization = req.headers.authorization;
-    const token = authorization?.replace('Bearer ', "");
-
-    if (!token) {
-        res.status(401).send("Você não tem permissão para realizar esta ação!");
-        return;
-    }
-    try {
-        await connection.query(`DELETE FROM sessoes WHERE token = $1`, [token]);
-        res.sendStatus(200);
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500).send("Ocorreu um erro. Por favor, tente novamente!");
-    }
-});
+app.post("/logout", signOut);
 
 export default app;

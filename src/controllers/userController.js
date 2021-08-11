@@ -1,4 +1,4 @@
-import { completeRegistry, authenticateSignIn } from "../services/userService.js";
+import { completeRegistry, authenticateSignIn, completeSignOut } from "../services/userService.js";
 import { userSchema, loginSchema } from "../schemas/userSchema.js";
 
 async function signUp(req, res) {
@@ -43,4 +43,24 @@ async function signIn(req, res) {
     }
 };
 
-export { signUp, signIn };
+async function signOut(req, res) {
+    const authorization = req.headers.authorization;
+    
+    const token = authorization?.replace('Bearer ', "");
+
+    try{
+        const logout = await completeSignOut(token);
+
+        if (logout === null) return res.status(401).send("Você não tem permissão para realizar esta ação!");
+
+        res.sendStatus(200);
+
+    } catch(err){
+        console.error(err);
+
+        res.sendStatus(500);
+    }
+
+};
+
+export { signUp, signIn, signOut };
