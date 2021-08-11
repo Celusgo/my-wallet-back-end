@@ -22,7 +22,9 @@ async function authenticateSignIn(email, password){
 
     await newSession(registeredUser.id, token);
 
-    return token;
+    delete registeredUser.senha;
+    
+    return {...registeredUser, token};
 }
 
 export {completeRegistry, authenticateSignIn};

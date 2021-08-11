@@ -34,7 +34,7 @@ async function signIn(req, res) {
 
         if (token === null) return res.sendStatus(401);
 
-        res.status(200).send({token});
+        res.status(200).send(token);
 
     } catch (err) {
         console.error(err);
