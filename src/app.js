@@ -5,6 +5,7 @@ import Joi from 'joi';
 import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 import { signIn, signUp } from "./controllers/userController.js";
+import { newIncome, newOutgoing } from "./controllers/transactionController.js";
 
 const app = express();
 app.use(cors());
@@ -16,85 +17,9 @@ app.post("/register", signUp);
 
 app.post("/login", signIn);
 
-app.post("/newincome", async (req, res) => {
-    const authorization = req.headers.authorization;
-    const token = authorization?.replace('Bearer ', "");
-    const { idUser, description, value, data } = req.body;
+app.post("/newincome", newIncome);
 
-    if (!token) {
-        res.status(401).send("Você não tem permissão para realizar esta ação!");
-        return;
-    }
-
-    const incomeSchema = Joi.object({
-        description: Joi.string().pattern(/[a-zA-Z0-9]/).required(),
-        value: Joi.number().min(1).required()
-    })
-
-    const { error } = incomeSchema.validate({
-        description: description,
-        value: value
-    })
-
-    if (error) {
-        res.status(400).send("Os dados foram inseridos de forma inválida.");
-        return;
-    };
-
-    try {
-        const checkToken = await connection.query(`SELECT * FROM sessoes WHERE token = $1 AND "idUser" = $2`, [token, idUser]);
-        if (checkToken.rows.length === 0) {
-            res.status(401).send("Você não tem permissão para realizar esta ação!");
-            return;
-        }
-        await connection.query('INSERT INTO transacoes ("idUser", "nomeTransacao", entrada, saida, data) VALUES ($1, $2, $3, $4, $5)', [idUser, description, value, 0, data]);
-        res.status(201).send("Sucesso!");
-
-    } catch (err) {
-        console.log(err);
-        res.status(500).send("Ocorreu um erro. Por favor, tente novamente!");
-    };
-});
-
-app.post("/newoutgoing", async (req, res) => {
-    const authorization = req.headers.authorization;
-    const token = authorization?.replace('Bearer ', "");
-    const { idUser, description, value, data } = req.body;
-
-    if (!token) {
-        res.status(401).send("Você não tem permissão para realizar esta ação!");
-        return;
-    }
-
-    const incomeSchema = Joi.object({
-        description: Joi.string().pattern(/[a-zA-Z0-9]/).required(),
-        value: Joi.number().min(1).required()
-    })
-
-    const { error } = incomeSchema.validate({
-        description: description,
-        value: value
-    })
-
-    if (error) {
-        res.status(400).send("Os dados foram inseridos de forma inválida.");
-        return;
-    };
-
-    try {
-        const checkToken = await connection.query(`SELECT * FROM sessoes WHERE token = $1 AND "idUser" = $2`, [token, idUser]);
-        if (checkToken.rows.length === 0) {
-            res.status(401).send("Você não tem permissão para realizar esta ação!");
-            return;
-        }
-        await connection.query('INSERT INTO transacoes ("idUser", "nomeTransacao", entrada, saida, data) VALUES ($1, $2, $3, $4, $5)', [idUser, description, 0, value, data]);
-        res.status(201).send("Sucesso!");
-
-    } catch (err) {
-        console.log(err);
-        res.status(500).send("Ocorreu um erro. Por favor, tente novamente!");
-    };
-});
+app.post("/newoutgoing", newOutgoing);
 
 app.get("/homepage", async (req, res) => {
     const authorization = req.headers.authorization;
