@@ -4,6 +4,7 @@ import connection from './database.js';
 import Joi from 'joi';
 import bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
+import { signIn, signUp } from "./controllers/userController.js";
 
 const app = express();
 app.use(cors());
@@ -11,79 +12,9 @@ app.use(express.json());
 
 
 
-app.post("/register", async (req, res) => {
-    const { name, email, password } = req.body;
+app.post("/register", signUp);
 
-    const userSchema = Joi.object({
-        name: Joi.string().min(1).required(),
-        email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required(),
-        password: Joi.string().alphanum().pattern(/[a-zA-Z0-9]/).min(4).required()
-    })
-
-    const { error } = userSchema.validate({
-        name: name,
-        email: email,
-        password: password
-    })
-
-    if (error) {
-        res.sendStatus(400);
-        return;
-    }
-
-    try {
-        const checkEmail = await connection.query(`SELECT * FROM clientes WHERE email = $1`, [email]);
-
-        if (checkEmail.rows.length !== 0) {
-            res.status(409).send("Este email já está cadastrado.");
-            return;
-        }
-
-        const hashedPassword = bcrypt.hashSync(password, 10);
-
-        await connection.query(`INSERT INTO clientes (nome, email, senha) VALUES ($1, $2, $3)`, [name, email, hashedPassword])
-
-        res.sendStatus(201);
-    } catch (err) {
-        console.log(err);
-        res.status(500).send("Ocorreu um erro. Por favor, tente novamente!");
-    }
-});
-
-app.post("/login", async (req, res) => {
-    const { email, password } = req.body;
-
-    const loginSchema = Joi.object({
-        email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required(),
-        password: Joi.string().alphanum().pattern(/[a-zA-Z0-9]/).min(4).required()
-    })
-
-    const { error } = loginSchema.validate({
-        email: email,
-        password: password
-    })
-
-    if (error) {
-        res.status(400).send("Os dados foram inseridos de forma inválida.");
-        return;
-    };
-
-    try {
-        const checkUser = await connection.query(`
-        SELECT * FROM clientes WHERE email = $1 `, [email]);
-        if (checkUser.rows.length !== 0 && bcrypt.compareSync(password, checkUser.rows[0].senha)) {
-            const token = uuid();
-            await connection.query(`INSERT INTO sessoes ("idUser", token) VALUES ($1, $2)`, [checkUser.rows[0].id, token]);
-            delete checkUser.rows[0].senha;
-            res.status(200).send([{ ...checkUser.rows[0], token: token }][0]);
-        } else {
-            res.status(406).send("Usuário e/ou senha incorreto(s), ou não existe.");
-        }
-    } catch (err) {
-        console.log(err);
-        res.status(500).send("Ocorreu um erro. Por favor, tente novamente!");
-    };
-});
+app.post("/login", signIn);
 
 app.post("/newincome", async (req, res) => {
     const authorization = req.headers.authorization;
