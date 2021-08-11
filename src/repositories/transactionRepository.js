@@ -12,4 +12,12 @@ async function newOutgoing(idUser, description, value, data){
         [idUser, description, 0, value, data]);
 };
 
-export { newIncome, newOutgoing };
+async function allTransactions(userId){
+    const request = await connection.query(
+        'SELECT * FROM transacoes WHERE "idUser" = $1',
+        [userId]);
+
+        return request.rows;
+};
+
+export { newIncome, newOutgoing, allTransactions };

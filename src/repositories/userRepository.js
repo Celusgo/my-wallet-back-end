@@ -23,11 +23,18 @@ async function newSession(userId, token){
 
 async function checkSession(userId, token){
     const request = await connection.query(
-        `SELECT FROM sessoes WHERE "idUser" = $1 and token = $2`,
+        `SELECT * FROM sessoes WHERE "idUser" = $1 and token = $2`,
         [userId, token]);
 
         return request.rows[0];
-
 };
 
-export {findExistingMail, newUser, newSession, checkSession};
+async function checkUserId(token){
+    const request = await connection.query(
+        `SELECT * FROM sessoes WHERE token = $1`,
+        [token]);
+
+        return request.rows[0].idUser;
+};
+
+export {findExistingMail, newUser, newSession, checkSession, checkUserId};

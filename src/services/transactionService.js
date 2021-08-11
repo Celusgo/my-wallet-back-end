@@ -1,5 +1,5 @@
-import { checkSession } from "../repositories/userRepository.js";
-import { newIncome, newOutgoing } from "../repositories/transactionRepository.js";
+import { checkSession, checkUserId } from "../repositories/userRepository.js";
+import { newIncome, newOutgoing, allTransactions } from "../repositories/transactionRepository.js";
 
 async function completeIncome(userId, description, value, data, token){
     const existingSession = await checkSession(userId, token);
@@ -19,5 +19,16 @@ async function completeOutgoing(userId, description, value, data, token){
 
 };
 
-export{ completeIncome, completeOutgoing };
+async function getAllTransactions(token){
+    const existingSession = await checkUserId(token);
+
+    if (!existingSession) return null;
+
+    const thisUserTransactions = await allTransactions(existingSession);
+
+    return thisUserTransactions;
+
+};
+
+export{ completeIncome, completeOutgoing, getAllTransactions };
 
