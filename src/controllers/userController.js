@@ -46,6 +46,8 @@ async function signIn(req, res) {
 
 async function signOut(req, res) {
     const authorization = req.headers.authorization;
+
+    if (!authorization) return res.status(401).send("Você não tem permissão para realizar esta ação!");
     
     const token = authorization?.replace('Bearer ', "");
 

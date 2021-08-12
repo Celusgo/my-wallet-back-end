@@ -16,7 +16,6 @@ afterAll(async () => {
 });
 
 const agent = supertest(app);
-const emailPattern = '[a-zA-Z0-9+._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+';
 const tokenPattern = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}';
 
 describe("POST /register", () => {
@@ -77,7 +76,7 @@ describe("POST /register", () => {
 
 describe("POST /login", () => {
 
-  it("returns status 200 for valid params", async () => {
+  it("returns status 200 for valid params and a valid object with a token", async () => {
     const body = createUser('validname', 'validmail@gmail.com', 'validpassword');
 
     const request = await agent.post("/register").send(body);
@@ -92,8 +91,8 @@ describe("POST /login", () => {
 
     expect(exists.body).toEqual(expect.objectContaining({
       id: expect.any(Number),
-      nome: expect.any(String),
-      email: expect.stringMatching(emailPattern),
+      nome: body.name,
+      email: body.email,
       token: expect.stringMatching(tokenPattern),
     }));
   });
@@ -175,8 +174,8 @@ describe("POST /logout", () => {
 
       expect(exists.body).toEqual(expect.objectContaining({
         id: expect.any(Number),
-        nome: expect.any(String),
-        email: expect.stringMatching(emailPattern),
+        nome: body.name,
+        email: body.email,
         token: expect.stringMatching(tokenPattern),
       }));
 
@@ -185,7 +184,7 @@ describe("POST /logout", () => {
 
     it("returns status 401 if no token is passed", async () => {
       const body = createUser('validname', 'validmail@gmail.com', 'validpassword');
-
+      
       const request = await agent.post("/register").send(body);
 
       const login = createLogin('validmail@gmail.com', 'validpassword');
@@ -200,8 +199,8 @@ describe("POST /logout", () => {
 
       expect(exists.body).toEqual(expect.objectContaining({
         id: expect.any(Number),
-        nome: expect.any(String),
-        email: expect.stringMatching(emailPattern),
+        nome: body.name,
+        email: body.email,
         token: expect.stringMatching(tokenPattern),
       }));
 

@@ -3,6 +3,8 @@ import { transactionSchema } from "../schemas/transactionSchema.js";
 
 async function newIncome(req, res){
     const authorization = req.headers.authorization;
+
+    if (!authorization) return res.status(401).send("Você não tem permissão para realizar esta ação!");
     
     const token = authorization?.replace('Bearer ', "");
 
@@ -31,6 +33,8 @@ async function newIncome(req, res){
 
 async function newOutgoing(req, res){
     const authorization = req.headers.authorization;
+
+    if (!authorization) return res.status(401).send("Você não tem permissão para realizar esta ação!");
     
     const token = authorization?.replace('Bearer ', "");
 
@@ -60,6 +64,8 @@ async function newOutgoing(req, res){
 async function allTransactions(req, res){
     const authorization = req.headers.authorization;
     
+    if (!authorization) return res.status(401).send("Você não tem permissão para realizar esta ação!");
+
     const token = authorization?.replace('Bearer ', "");
 
     try{
