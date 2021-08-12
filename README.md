@@ -34,7 +34,6 @@ npm run dev
 8. Your server should be running now.
 <br/>
 <br/>
-<br/>
 
 ## In case you want to run the tests
 
