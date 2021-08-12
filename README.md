@@ -1,5 +1,4 @@
 ## How to run
-<br/>
 
 1. Clone this repository
 ```bash
@@ -38,7 +37,6 @@ npm run dev
 <br/>
 
 ## In case you want to run the tests
-<br/>
 
 1. Make sure you have followed the ``step 4`` from the session above **as strictly as specified**.
 
