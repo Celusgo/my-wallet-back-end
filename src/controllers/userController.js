@@ -32,7 +32,7 @@ async function signIn(req, res) {
 
         const token = await authenticateSignIn(email, password);
 
-        if (token === null) return res.sendStatus(401);
+        if (token === null) return res.status(401).send("Email e/ou senha inválidos.");
 
         res.status(200).send(token);
 
