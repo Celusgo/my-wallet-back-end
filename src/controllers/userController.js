@@ -10,6 +10,7 @@ async function signUp(req, res) {
 
     try {
         const createUser = await completeRegistry(name, email, password);
+        
         if (createUser === null) return res.sendStatus(409);
 
         res.sendStatus(201);
