@@ -1,19 +1,19 @@
+import "../src/setup.js";
 import supertest from "supertest";
 import app from "../src/app.js";
-import connection from "../src/database.js";
-import database from "../src/database.js";
+
+import { clearDatabase, closeConnection } from "../tests/utils/database.js";
 
 beforeEach(async () => {
-  await connection.query(`DELETE FROM clientes`);
-  await connection.query("DELETE FROM sessoes");
+  await clearDatabase();
 });
 
 afterAll(async () => {
-  await connection.query(`DELETE FROM clientes`);
-  await connection.query("DELETE FROM sessoes");
-  database.end();
+  await clearDatabase();
+  await closeConnection();
 });
 
+const agent = supertest(app);
 describe("POST /register", () => {
   it("returns status 201 for valid params", async () => {
     const body = {
@@ -101,7 +101,7 @@ describe("POST /login", () => {
     expect(exist.status).toEqual(400);
   });
 
-  it("returns status 406 for invalid user", async () => {
+  it("returns status 401 for invalid user", async () => {
     const body = {
       name: "Marcelo",
       email: "marcelo@gmail.com",
@@ -114,10 +114,10 @@ describe("POST /login", () => {
     const test = await supertest(app).post("/register").send(body);
     expect(test.status).toEqual(201);
     const exist = await supertest(app).post("/login").send(login);
-    expect(exist.status).toEqual(406);
+    expect(exist.status).toEqual(401);
   });
 
-  it("returns status 406 for invalid password", async () => {
+  it("returns status 401 for invalid password", async () => {
     const body = {
       name: "Marcelo",
       email: "marcelo@gmail.com",
@@ -130,6 +130,6 @@ describe("POST /login", () => {
     const test = await supertest(app).post("/register").send(body);
     expect(test.status).toEqual(201);
     const exist = await supertest(app).post("/login").send(login);
-    expect(exist.status).toEqual(406);
+    expect(exist.status).toEqual(401);
   });
 });
