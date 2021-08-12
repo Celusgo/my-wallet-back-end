@@ -52,7 +52,7 @@ npm run dev
 
     - 2.4 Create a table by typing ``CREATE DATABASE mywallettest template mywallet;`` and hitting enter. **This will create a new database with the same pattern your first database**.
 
-3. Move back in the root folder, create a file named ``.env.test`` in the same format as the ``.env.example`` file and fill with your information. e.g.: ``DATABASE_URL=postgres://postgres:YOURPASSWORD@localhost:5432/mywallettest`` (where ``YOURPASSWORD`` is your PostgreSQL password) and ``PORT=YOURPORT`` (where ``YOURPORT`` is a port of your choice, usually 4000).    
+3. Move back to the root folder of your project, create a file named ``.env.test`` in the same format as the ``.env.example`` file and fill with your information. e.g.: ``DATABASE_URL=postgres://postgres:YOURPASSWORD@localhost:5432/mywallettest`` (where ``YOURPASSWORD`` is your PostgreSQL password) and ``PORT=YOURPORT`` (where ``YOURPORT`` is a port of your choice, usually 4000).    
 
 4. That's it! Everything should be ready. Now, to run the tests, move to the folder of your project in the terminal and use the command
 ```bash
