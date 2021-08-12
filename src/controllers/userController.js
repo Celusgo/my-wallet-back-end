@@ -49,12 +49,12 @@ async function signOut(req, res) {
     
     const token = authorization?.replace('Bearer ', "");
 
+    if (!token) return res.sendStatus(401);
+
     try{
-        const logout = await completeSignOut(token);
+        await completeSignOut(token);
 
-        if (logout === null) return res.status(401).send("Você não tem permissão para realizar esta ação!");
-
-        res.sendStatus(200);
+        return res.sendStatus(200);
 
     } catch(err){
         console.error(err);

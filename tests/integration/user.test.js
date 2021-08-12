@@ -16,8 +16,11 @@ afterAll(async () => {
 });
 
 const agent = supertest(app);
+const emailPattern = '[a-zA-Z0-9+._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+';
+const tokenPattern = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}';
 
 describe("POST /register", () => {
+
   it("returns status 201 for valid params", async () => {
     const body = createUser('validname', 'validmail@gmail.com', 'validpassword');
 
@@ -69,12 +72,10 @@ describe("POST /register", () => {
     
     expect(exists.status).toEqual(409);
   });
+
 });
 
 describe("POST /login", () => {
-
-  const emailPattern = '[a-zA-Z0-9+._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+';
-  const tokenPattern = '[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}';
 
   it("returns status 200 for valid params", async () => {
     const body = createUser('validname', 'validmail@gmail.com', 'validpassword');
@@ -95,7 +96,6 @@ describe("POST /login", () => {
       email: expect.stringMatching(emailPattern),
       token: expect.stringMatching(tokenPattern),
     }));
-
   });
 
   it("returns status 400 for invalid email format", async () => {
@@ -153,4 +153,59 @@ describe("POST /login", () => {
     
     expect(exists.status).toEqual(401);
   });
+
+});
+
+describe("POST /logout", () => {
+
+    it("returns status 200 if the user is logged in and tries to logout passing a valid token", async () => {
+      const body = createUser('validname', 'validmail@gmail.com', 'validpassword');
+
+      const request = await agent.post("/register").send(body);
+
+      const login = createLogin('validmail@gmail.com', 'validpassword');
+
+      const exists = await agent.post("/login").send(login);
+
+      const logout = await agent.post("/logout").set("Authorization", `Bearer ${exists.body.token}`);
+
+      expect(request.status).toEqual(201);
+
+      expect(exists.status).toEqual(200);
+
+      expect(exists.body).toEqual(expect.objectContaining({
+        id: expect.any(Number),
+        nome: expect.any(String),
+        email: expect.stringMatching(emailPattern),
+        token: expect.stringMatching(tokenPattern),
+      }));
+
+      expect(logout.status).toEqual(200);
+    });
+
+    it("returns status 401 if no token is passed", async () => {
+      const body = createUser('validname', 'validmail@gmail.com', 'validpassword');
+
+      const request = await agent.post("/register").send(body);
+
+      const login = createLogin('validmail@gmail.com', 'validpassword');
+
+      const exists = await agent.post("/login").send(login);
+
+      const logout = await agent.post("/logout").set("Authorization", '');
+
+      expect(request.status).toEqual(201);
+
+      expect(exists.status).toEqual(200);
+
+      expect(exists.body).toEqual(expect.objectContaining({
+        id: expect.any(Number),
+        nome: expect.any(String),
+        email: expect.stringMatching(emailPattern),
+        token: expect.stringMatching(tokenPattern),
+      }));
+
+      expect(logout.status).toEqual(401);
+    });
+
 });

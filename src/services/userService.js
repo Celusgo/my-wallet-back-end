@@ -1,5 +1,5 @@
 
-import { findExistingMail, newUser, newSession, checkUserId, deleteSession } from "../repositories/userRepository.js";
+import { findExistingMail, newUser, newSession, deleteSession } from "../repositories/userRepository.js";
 import bcrypt from "bcrypt";
 import {v4 as uuid} from "uuid";
 
@@ -28,11 +28,8 @@ async function authenticateSignIn(email, password){
 };
 
 async function completeSignOut(token){
-    const existingSession = await checkUserId(token);
-
-    if (!existingSession) return null;
 
     await deleteSession(token);
-}
+};
 
 export {completeRegistry, authenticateSignIn, completeSignOut};
