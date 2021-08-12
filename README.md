@@ -36,7 +36,7 @@ npm run dev
 <br/>
 <br/>
 <br/>
-<br/>
+
 ## In case you want to run the tests
 <br/>
 
@@ -59,7 +59,7 @@ npm run dev
 npm run test
 ```
 
-4. The tests will run on the terminal.
+5. The tests will run on the terminal.
 
 
 
