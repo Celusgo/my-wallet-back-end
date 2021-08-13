@@ -416,19 +416,19 @@ describe("POST /newincome", () => {
         expect(homepage.body[0][0]).toEqual({
             id: expect.any(Number),
             idUser: exists.body.id,
-            nomeTransacao: 'Entrada',
-            entrada: 500,
+            nomeTransacao: newIncome.description,
+            entrada: newIncome.value,
             saida: 0,
-            data: '01-01'
+            data: newIncome.data
         });
 
         expect(homepage.body[0][1]).toEqual({
             id: expect.any(Number),
             idUser: exists.body.id,
-            nomeTransacao: 'Saida',
+            nomeTransacao: newOutgoing.description,
             entrada: 0,
-            saida: 250,
-            data: '01-01'
+            saida: newOutgoing.value,
+            data: newOutgoing.data
         });
 
         expect(homepage.body[1]).toEqual(250);
